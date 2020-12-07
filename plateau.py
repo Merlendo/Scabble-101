@@ -39,3 +39,5 @@ affichageBoard(b)
 print()
 init_bonus(b)
 affichageBoard(b)
+
+#hugo tes là
