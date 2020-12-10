@@ -33,7 +33,6 @@ def init_bonus():
 def init_jetons():
     x=[["" for j in range(15)] for i in range(15)]
     return x
-#print (init_jetons())
     
 def affiche_jetons(j,x) : # prosoire 
 
@@ -60,7 +59,7 @@ def affiche_jetons(j,x) : # prosoire
                 
                 n = len(lignes)
                 for c in caseb :
-                    if [li,le] in case[c] :
+                    if [li,el] in caseb[c] :
                         lignes.append(x+c)
 
                 if len(lignes) == n:
@@ -199,7 +198,6 @@ def mot_jouable(mot, ll):
         
     return ok
 
-
 def mots_jouable(motsfr,ll): ## exploter les mots deja présent
 
     mj = []
@@ -233,7 +231,7 @@ def meilleur_mot(motsfr, ll, dico):
 
     lm =[]
 
-    mm = valeur(mots[0] ,dico)
+    mm = valeur_mot(mots[0] ,dico)
 
     for m in mots:
         
@@ -243,12 +241,11 @@ def meilleur_mot(motsfr, ll, dico):
 
     for m in mots:   # boucle option 
 
-        if valeur(m,dico) == mm :
+        if valeur_mot(m,dico) == mm :
 
             lm.append(m)
 
     return lm
-
 
 
 ## partie 5
@@ -269,35 +266,35 @@ def tester_placement(plateau,i,j,dr,mot):
     ok = True
     l = []
 
-    if dr == "horizontal":
+    if dr == "horizontale":
 
-        if len(mot) > 14 - j:
+        if len(mot) > 15 - j:
             ok = False
         else :
-            for x in range(j,15):
-                if plateau[i,x]!= '' or plateau [i,x]!= mot[x-j]:
+            for x in range(j,j+len(mot)):
+                if not( plateau[i][x]=='' or plateau [i][x]== mot[x-j]):
                     ok = False
 
         if ok :  
             x = j
             for e in mot :
-                if plateau[i,x] == '' :
+                if plateau[i][x] == '' :
                     l.append(e)
                 x = x+1
                     
-    if dr == "vertical":
+    if dr == "verticale":
 
-        if len(mot) > 14 - i:
+        if len(mot) > 15 - i:
             ok = False
         else :
-            for x in range(i,15):
-                if plateau[x,j]!= '' or plateau [x,j]!= mot[x-i]:
+            for x in range(i,i+len(mot)):
+                if not( plateau[x][j]=='' or plateau [x][j]== mot[x-i]):
                     ok = False
 
         if ok :  
             x = i
             for e in mot :
-                if plateau[x,j] == '' :
+                if plateau[x][j] == '' :
                     l.append(e)
                 x = x+1
     return l
@@ -309,18 +306,18 @@ def placer_mot(plateau,lm,mot,i,j,dr):
     
     if len(l)!= 0 :
         
-        if dr == "horizontal":
+        if dr == "horizontale":
             x = j
             for e in mot :
                 if e in l :
-                    plateau[i,x] = e
+                    plateau[i][x] = e
                     lm.remove(e)
                 x = x + 1
-        if dr == "vertical":
+        if dr == "verticale":
             x = i
             for e in mot :
                 if e in l :
-                    plateau[x,j] = e
+                    plateau[x][j] = e
                     lm.remove(e)
                 x = x + 1
         ok = True
@@ -328,8 +325,7 @@ def placer_mot(plateau,lm,mot,i,j,dr):
         ok = False
         
     return ok
-
-
+# a completer
 ## partie 6
 
 
