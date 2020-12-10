@@ -67,9 +67,10 @@ def affiche_jetons(j,x) : # prosoire
 
             else:
                 lignes.append(elem)
-            li = li + 1
+            el = el+1
+            
         cases.append(lignes)
-        el = el+1
+        li = li + 1
 
     for i in cases :
         for k in i :
