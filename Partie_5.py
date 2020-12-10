@@ -59,17 +59,17 @@ def tester_placement(board,x,y,direction,mot):
     
     if str(direction.upper()) == "HORIZONTALE" and len(mot)<=15-x:
         for i in range (len(mot)):
-            print("i: ",i)
-            print("board: ",board[y][i+x])
+            ##print("i: ",i)
+            ##print("board: ",board[y][i+x])
 
             if board[y][i+x] not in ["x","MT","MD","LT","LD"]:
                 liste_lettres.append(board[y][i+x])
         ##if liste_lettres in lettres or liste_lettres == ["s"]:
           ##  lettres_necessaires=lettres-liste_lettres
-            print("liste_lettres: ",liste_lettres)
+            ##print("liste_lettres: ",liste_lettres)
         if liste_lettres != []:
             for l in liste_lettres:
-                print("l=",l)
+                ##print("l=",l)
                 lettres.remove(l)
 
     elif direction.upper() == "VERTICALE" and len(mot)<=15-y:
@@ -80,12 +80,12 @@ def tester_placement(board,x,y,direction,mot):
           ##  lettres_necessaires=lettres-liste_lettres
         if liste_lettres != []:
             for l in liste_lettres:
-                print("l=",l)
+                ##print("l=",l)
                 lettres.remove(l)
     else:
         lettres=[-1]
     
-    return lettres
+    return lettres,liste_lettres
 
 ##def placer_mot(board,main,mot,x,y,direction):
   ##  lettres_necessaires=tester_placement(board,x,y,direction,mot)
@@ -118,5 +118,7 @@ b[7][7]="T"
 b[7][10]="S"
 print(b)
 print(hand)
-print(tester_placement(b,x,y,direction,mot))
+a,m=tester_placement(b,x,y,direction,mot)
+print(a)
+print(m)
     ##i=i+1
