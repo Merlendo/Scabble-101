@@ -44,8 +44,7 @@ affichageBoard(b)
 def lire_coords(board):
     x=int(input("colonne: "))
     y=int(input("ligne: "))
-    coord=board[y][x]
-    while coord not in "xMTMDLTLD":
+    while x>15 or y>15:
         x=int(input("colonne: "))
         y=int(input("ligne: "))
         print(board[y][x])
@@ -53,31 +52,36 @@ def lire_coords(board):
 
 def tester_placement(board,x,y,direction,mot):
     initialisation = board[y][x] 
-    lettres=list(mot)
-    print(lettres)
-    liste_lettres=["t","h"]
+    lettres=list(mot.upper())
+    print("liste lettres du mot: ",lettres)
+    liste_lettres=[]
     lettres_necessaires=[]
     
-    if str(direction.lower()) == "horizontale" and len(mot)<=15-x:
+    if str(direction.upper()) == "HORIZONTALE" and len(mot)<=15-x:
         for i in range (len(mot)):
-            print(i)
-            print(board[y][i+x])
+            print("i: ",i)
+            print("board: ",board[y][i+x])
 
-            if board[y][i+x] not in 'xMTMDLTLD':
-                liste_lettres=liste_lettre.append(board[y][i+x])
+            if board[y][i+x] not in ["x","MT","MD","LT","LD"]:
+                liste_lettres.append(board[y][i+x])
         ##if liste_lettres in lettres or liste_lettres == ["s"]:
           ##  lettres_necessaires=lettres-liste_lettres
-        for l in liste_lettres:
-            lettres.remove(l)
+            print("liste_lettres: ",liste_lettres)
+        if liste_lettres != []:
+            for l in liste_lettres:
+                print("l=",l)
+                lettres.remove(l)
 
-    elif direction.lower() == "verticale" and len(mot)<=15-y:
+    elif direction.upper() == "VERTICALE" and len(mot)<=15-y:
         for i in range (len(mot)):
             if board[i+y][x] not in 'xMTMDLTLD':
-                liste_lettres=liste_lettre.append(board[i+y][x])
+                liste_lettres.append(board[i+y][x])
         ##if liste_lettres in lettres or liste_lettres == ["s"]:
           ##  lettres_necessaires=lettres-liste_lettres
-        for l in liste_lettres:
-            lettres.remove(l)
+        if liste_lettres != []:
+            for l in liste_lettres:
+                print("l=",l)
+                lettres.remove(l)
     else:
         lettres=[-1]
     
@@ -104,12 +108,15 @@ def tester_placement(board,x,y,direction,mot):
 
 hand=['t','h','e','i','e','r','e']
 i=0
-while i <2:
-    mot=input('mot: ')
-    x,y=lire_coords(b)
-    direction=input('horizontale/verticale: ')
+##while i <2:
+mot=input('mot: ')
+x,y=lire_coords(b)
+direction=input('horizontale/verticale: ')
     ##placer_mot(b,hand,mot,x,y,direction)
-    print(b)
-    print(hand)
-    print(tester_placement(b,x,y,direction,mot))
-    i=i+1
+    
+b[7][7]="T"
+b[7][10]="S"
+print(b)
+print(hand)
+print(tester_placement(b,x,y,direction,mot))
+    ##i=i+1
