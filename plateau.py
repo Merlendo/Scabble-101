@@ -15,7 +15,7 @@ def board():
 def affichageBoard(board):
     for line in board:
         for elem in line:
-            print(elem, end=" ")
+            print(elem.rjust(2), end=" ")
         print()
 
 def changeBoard(lettre, position, board):
