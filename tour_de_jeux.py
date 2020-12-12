@@ -29,8 +29,8 @@ def affichage_ecran(board,joueurs,ordre,sac):
     clear_screen()
     affichageBoard(board)
     print("NOM DU JOUEUR :", joueurs[ordre]["nom"])
-    print(["A","Z","E","V","C","?","U"])
-    #print(joueurs[ordre]["main"])
+    #print(["A","Z","E","V","C","?","U"])
+    print(joueurs[ordre]["main"])
     print("TAILLE SAC :", len(sac))
 
 def tour_joueur(board, main, sac, joueurs, ordre):
@@ -77,7 +77,7 @@ def tour_joueur(board, main, sac, joueurs, ordre):
     #PLACE DES JETONS - TESTER LES FONCTION DU MODULES PLACEMENT
     elif action == "3":
 
-        main = ["A","Z","E","V","C","?","U"]
+        #main = ["A","Z","E","V","C","?","U"]
         verification = True
         #REPARER VERIFICATION
         while verification:
