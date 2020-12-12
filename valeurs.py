@@ -16,11 +16,16 @@ def meilleur_mot(liste_mots_possibles,lettres,dico):
     for mot in mots:
         if valeur_mot(mot,dico) > valeur_mot(meilleurMot,dico):
             meilleurMot = mot
-    return meilleurMot
+    meilleursMots = []
+    for mot in mots:
+        if valeur_mot(mot,dico) == valeur_mot(meilleurMot,dico):
+            meilleursMots.append(mot)
+    return meilleursMots
 
-lettres = init_dico()
+"""lettres = init_dico()
 dico=generer_dico()
-main=["A","A","B","R","R","R","E","V","I","M"]
+main=["A","A","B","R","R","R","E","V","I","M","A","E","U","Y","S"]
 best = meilleur_mot(dico,main,lettres)
-print("Le mot le plus interressant est :",best,"avec",valeur_mot(best,lettres),"points")
+
+print("Les mots les plus interressant sont :",best,"avec",valeur_mot(best[0],lettres),"points")"""
 
