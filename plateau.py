@@ -1,91 +1,49 @@
-import random
+import copy
 
-def init_dico_manuel():
-    lettres = dict()
-    i = ord("A")
-    while i <= ord("Z"):
-        lettres[chr(i)] = {}
-        i = i + 1
-    lettres["?"] = {}
-    print(lettres)
-    for lettre in lettres:
-        print(lettre)
-        occ = int(input("Occurance : "))
-        val = int(input("Valeur : "))
-        lettres[lettre] = {"occ" : occ, "val" : val}
-        print("deuxieme dic : ",lettres[lettre])
-    return lettres
+def board():
+    board=[]
+    for i in range(15):
+        line=[]
+        for j in range(15):
+            line.append(" ")
+        board.append(line)
+    return board
 
-
-def init_dico():
-    lettres = {'A': {'occ': 9, 'val': 1},
-               'B': {'occ': 2, 'val': 3}, 
-               'C': {'occ': 2, 'val': 3}, 
-               'D': {'occ': 3, 'val': 2}, 
-               'E': {'occ': 15, 'val': 1}, 
-               'F': {'occ': 2, 'val': 4}, 
-               'G': {'occ': 2, 'val': 2}, 
-               'H': {'occ': 2, 'val': 4}, 
-               'I': {'occ': 8, 'val': 1}, 
-               'J': {'occ': 1, 'val': 8}, 
-               'K': {'occ': 1, 'val': 10}, 
-               'L': {'occ': 5, 'val': 1}, 
-               'M': {'occ': 3, 'val': 2}, 
-               'N': {'occ': 6, 'val': 1}, 
-               'O': {'occ': 6, 'val': 1}, 
-               'P': {'occ': 2, 'val': 3}, 
-               'Q': {'occ': 1, 'val': 8}, 
-               'R': {'occ': 6, 'val': 1}, 
-               'S': {'occ': 6, 'val': 1}, 
-               'T': {'occ': 6, 'val': 1}, 
-               'U': {'occ': 6, 'val': 1}, 
-               'V': {'occ': 2, 'val': 4}, 
-               'W': {'occ': 1, 'val': 10}, 
-               'X': {'occ': 1, 'val': 10}, 
-               'Y': {'occ': 1, 'val': 10}, 
-               'Z': {'occ': 1, 'val': 10}, 
-               '?': {'occ': 2, 'val': 0}}
-
-    return lettres
-
-def init_pioche(dico):
-    pioche = []
-    for lettre in dico :
-        for i in range(dico[lettre]["occ"]):
-            pioche.append(lettre)
-        #pioche = [lettre for x in range(dico[lettre]["occ"])] VOIR COMPREHENSION PYTHON
-    return pioche
-
-def piocher(x, sac):
-    jetons_piocher = []
-    for i in range(x):
-        r = random.randint(0,len(sac)-1)
-        jetons_piocher.append(sac[r])
-        sac.pop(r)
-    return jetons_piocher
-
-def completer_main(main,sac):
-    jeton_a_piocher = 7-len(main)
-    if len(sac) <= jeton_a_piocher:
-        main.extend(piocher(len(sac),sac))
-    else:
-        main.extend(piocher(jeton_a_piocher,sac))
-        
-def echanger(jetons, main, sac):
+def affichageBoard(board):
+    affBoard = copy.deepcopy(board)
+    coord = [" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"]
+    affBoard.insert(0,coord)
     
-    listeJeton = piocher(len(jetons),sac)
-    main.extend(listeJeton)
+    for i in range(1,len(affBoard)):
+        affBoard[i].insert(0,str(i))
+ 
+    for line in affBoard:
+        for elem in line:
+            print(elem.rjust(2), end=" ")
+        print()
 
-    sac.extend(jetons)
+def changeBoard(lettre, position, board):
+    board[position[0]].pop(position[1])
+    board[position[0]].insert(position[1],lettre)
+    return board
 
-    
+def init_bonus(board):
+    cases_MT = [[0,0],[0,7],[0,14],[7,0],[7,14],[14,0],[14,7],[14,14]]
+    cases_MD = [[1,1],[1,13],[2,2],[2,12],[3,3],[3,11],[4,4],[4,10],[7,7],[10,4],[10,10],[11,3],[11,11],[12,2],[12,12],[13,1],[13,13]]
+    cases_LT = [[1,5],[1,9],[5,1],[5,5],[5,9],[5,13],[9,1],[9,5],[9,9],[9,13],[13,5],[13,9]]
+    cases_LD = [[0,3],[0,11],[2,6],[2,8],[3,0],[3,7],[3,14],[6,2],[6,6],[6,8],[6,12],[7,3],[7,11],[8,2],[8,6],[8,8],[8,12],[11,0],[11,7],[11,14],[12,6],[12,8],[14,3],[14,11]]
 
-'''dico = init_dico()
-p = init_pioche(dico)
-print(p)
-pioche = ['A']
-main = ["I","J"]
-print(main)
-completer_main(main,pioche)
-print(pioche)
-print(main)'''
+    for position in cases_MT:
+        changeBoard('MT', position, board)
+    for position in cases_MD:
+        changeBoard("MD", position, board)
+    for position in cases_LT:
+        changeBoard("LT", position, board)
+    for position in cases_LD:
+        changeBoard("LD", position, board)
+
+#COMPARE LE PLATEAU AVANT L'APPLICATION DES BONUS ET APRES
+"""b = board()
+init_bonus(b)
+affichageBoard(b)"""
+
