@@ -72,10 +72,15 @@ def completer_main(main,sac):
         main.extend(piocher(jeton_a_piocher,sac))
         
 def echanger(jetons, main, sac):
-  return None
+    
+    listeJeton = piocher(len(jetons),sac)
+    main.extend(listeJeton)
+
+    sac.extend(jetons)
+
     
 
-dico = init_dico()
+'''dico = init_dico()
 p = init_pioche(dico)
 print(p)
 pioche = ['A']
@@ -83,4 +88,4 @@ main = ["I","J"]
 print(main)
 completer_main(main,pioche)
 print(pioche)
-print(main)
+print(main)'''
