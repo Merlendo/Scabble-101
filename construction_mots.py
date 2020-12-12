@@ -10,7 +10,7 @@ def mot_jouable(mot,ll):
     lettres = list(ll)
     possible = True
     for i in mot :
-        possible = possible and (i in lettres )
+        possible = possible and (i in lettres)
         if possible :
             lettres.remove(i)
         elif '?' in lettres :
