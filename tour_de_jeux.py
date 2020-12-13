@@ -3,6 +3,7 @@ from plateau import affichageBoard, init_bonus, board
 from placement import lire_coords, tester_placement, placer_mot, coords_check
 from construction_mots import mot_jouable, generer_dico, mots_jouables
 import os
+import time
 
 def clear_screen():
     os.system('cls')
@@ -18,22 +19,69 @@ def initialisation(sac):
         clear_screen()
     return setup
 
-def fin_partie():
-    return None
+def fin_partie(sac, joueurs):
+    if len(sac) == 0:
+        print("La partie est fini")
+        for i in range(len(joueurs)):
+            print(joueurs[i]["nom"], ':',joueurs[i]["score"])
+        print("Le gagnant est ...")
+        #menu()
 
-def prochain_tour(board, ordre, joueurs, sac):
+def comptage(board,mot,direction,i,j):
+    vide=["x","MT","MD","LT","LD"]
+    bonus_lettres=["LT","LD"]
+    bonus_mot=["MT","MD"]
+    valeurs_bonus_mot=[0,0]
+    valeurs_bonus_lettres=[]
+
+    if direction == "horizontale":
+        colonne=j
+
+        for elem in mot:
+
+            if board[i][colonne] in bonus_lettres:
+
+                if board[i][colonne] == "LT":
+                    valeurs_bonus_lettres.append(3)
+                else:
+                    valeurs_bonus_lettres.append(2)
+
+            elif board[i][colonne] in bonus_mot:
+                valeurs_bonus_lettres.append(1)
+
+                if board[i][colonne]=="MT":
+                    valeurs_bonus_mot[0]=3
+                else:
+                    valeurs_bonus_mot[1]=2
+
+            else:
+                valeurs_bonus_lettres.append(1)
+
+            colonne=colonne+1
+
+    values=[valeurs_bonus_mot,valeurs_bonus_lettres]
+
+    return values   
+
+
+def prochain_tour(board, ordre, joueurs, sac, liste_mots, premiertour):
     ordre = (ordre+1)%len(joueurs)
-    tour_joueur(board, joueurs[ordre]["main"], sac, joueurs, ordre)
+    tour_joueur(board, joueurs[ordre]["main"], sac, joueurs, ordre, liste_mots, premiertour)
 
 def affichage_ecran(board,joueurs,ordre,sac):
     clear_screen()
     affichageBoard(board)
     print("NOM DU JOUEUR :", joueurs[ordre]["nom"])
     #print(["A","Z","E","V","C","?","U"])
+
+    for i in range(len(joueurs)):
+        print(joueurs[i]['nom'],joueurs[i]['score'], end='')
+    print()
     print(joueurs[ordre]["main"])
     print("TAILLE SAC :", len(sac))
 
-def tour_joueur(board, main, sac, joueurs, ordre):
+def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
+    fin_partie(sac, joueurs)
     #AFFICHAGE DU PLATEAU / ESTHETIQUE / MISE EN PLACE
     affichage_ecran(board,joueurs,ordre,sac)
     #AFFICHER LA TAILLE DU SAC EN PERMANENCE
@@ -53,7 +101,7 @@ def tour_joueur(board, main, sac, joueurs, ordre):
 
     #PASSE LE TOUR - OK
     if action == "1":
-        prochain_tour(board, ordre, joueurs, sac)
+        prochain_tour(board, ordre, joueurs, sac,liste_mots,premiertour)
 
     #ECHANGE DES JETONS - OK
     elif action == "2":
@@ -72,7 +120,7 @@ def tour_joueur(board, main, sac, joueurs, ordre):
         
         echanger(jetons,main, sac)
 
-        prochain_tour(board, ordre, joueurs, sac)
+        prochain_tour(board, ordre, joueurs, sac,liste_mots,premiertour)
     
     #PLACE DES JETONS - TESTER LES FONCTION DU MODULES PLACEMENT
     elif action == "3":
@@ -87,7 +135,7 @@ def tour_joueur(board, main, sac, joueurs, ordre):
 
             print("Quelle mot voulez vous placer ?")
             mot = input("> ")
-            if mot.upper() in motsJouable:
+            if mot.upper() in motsJouable or mot == "":
                 verification = False
             
             #REMPLACE ? AVEC LETTRE MANQUANTE
@@ -104,30 +152,44 @@ def tour_joueur(board, main, sac, joueurs, ordre):
     
         verification = True
         while verification:
+
             affichage_ecran(board,joueurs,ordre,sac)
             print("Quelles coordonnées ? (ex : A5)")
             coords = input("> ")
+            
             if coords_check(coords.upper()) != False:
+        
                 coords = coords_check(coords.upper())
-                verification = False
+                if not premiertour or ((coords[0] == 8 and coords[1] + len(mot) >= 8) or (coords[1] == 8 and coords[1] + len(mot) >= 8)):
+                    verification = False
+                    
         
         direction = ""
         POSSIBILITE = ["horizontale","verticale"]
-        while direction.lower() not in POSSIBILITE:
-            affichage_ecran(board,joueurs,ordre,sac)
-            print("Dans quelle direction ? (horizontale/verticale)")
-            direction = input("> ")
-            
-       
+        if premiertour and coords != [8,8]:
+            if coords[0] == 8 :
+                direction = 'verticale'
+            else:
+                direction = 'horizontale'
+        else:
+            while direction.lower() not in POSSIBILITE:
+                affichage_ecran(board,joueurs,ordre,sac)
+                print("Dans quelle direction ? (horizontale/verticale)")
+                direction = input("> ")
+
+        
+        #print(comptage(board,mot,direction,coords[0]-1,coords[1]-1))
+        #time.sleep(4)
+
         placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
 
         #REMETTRE LE NOMBRE DE PIECES POSER DANS LA MAIN DU JOUEURS
         completer_main(main,sac)
     
     
-        prochain_tour(board, ordre, joueurs, sac)
+        prochain_tour(board, ordre, joueurs, sac,liste_mots, False)
 
-#VARIABLES TEMPORAIRES DE TEST    
+"""#VARIABLES TEMPORAIRES DE TEST    
 lettres = init_dico()
 sac = init_pioche(lettres)
 board = board()
@@ -137,4 +199,5 @@ clear_screen()
 joueurs = initialisation(sac)
 ordre = 0
 init_bonus(board)
-tour_joueur(board, joueurs[ordre]["main"], sac, joueurs, ordre)
+#sac = ['R','O','B','I','N','E','T']
+tour_joueur(board, joueurs[ordre]["main"], sac, joueurs, ordre, premiertour=False)"""
