@@ -214,4 +214,5 @@ def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
         sauvegarde['ordre'] = ordre
         sauvegarde['premiertour'] = premiertour
         sauvegarde.close()
+        clear_screen()
         exit()
