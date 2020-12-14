@@ -2,6 +2,7 @@ from plateau import board
 import os
 import time
 
+#Fontion qui prend en paramètre un strig de type 'A5' et le transforme en integer correspondant aux coordonnées du plateau
 def coords_check(coords):
     newcoords = []
     if (len(coords) <= 3 and len(coords) > 1 ) and (coords[0] in ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"]) and (coords[1:] in [str(x) for x in range(16) if x > 0]) :
@@ -11,28 +12,7 @@ def coords_check(coords):
     else:
         return False
 
-
-def lire_coords():
-    verification = True
-    while verification:
-        os.system('cls')
-        print("Quelles coordonnées ? (ex : A5)")
-        coords = input("> ")
-        if coords_check(coords) != False:
-            coords = coords_check(coords)
-            verification = False
-    
-    direction = ""
-    POSSIBILITE = ["horizontale","verticale"]
-    while direction.lower() not in POSSIBILITE:
-        os.system('cls')
-        print("Dans quelle direction ? (horizontale/verticale)")
-        direction = input("> ")
-        
-    return coords, direction.lower()
-
-
-
+#Test si le placement est possible est renvoi les lettres necessaires au plament du mot
 def tester_placement(board,i,j,direction,mot):
     vide=[" ","*","^","-","+"]
     drapeau = True
@@ -76,6 +56,7 @@ def tester_placement(board,i,j,direction,mot):
 
     return lettres_necessaires
 
+#Place le mot
 def placer_mot(board,main,mot,i,j,direction,lettres_necessaires):
         if direction == "horizontale":
 
@@ -96,6 +77,7 @@ def placer_mot(board,main,mot,i,j,direction,lettres_necessaires):
         drapeau=True
 
 
+#Compte les bonus à appliquer au mot placer
 def comptage(board,mot,direction,i,j):
     vide=[" ","*","^","-","+"]
     bonus_lettres=["-","+"]
