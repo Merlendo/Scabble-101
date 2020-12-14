@@ -100,6 +100,67 @@ def placer_mot(board,main,mot,i,j,direction):
         drapeau=False
     return drapeau
 
+def comptage(board,mot,direction,i,j):
+    vide=["x","MT","MD","LT","LD"]
+    bonus_lettres=["LT","LD"]
+    bonus_mot=["MT","MD"]
+    valeurs_bonus_mot=[0,0]
+    valeurs_bonus_lettres=[]
+
+    if direction == "horizontale":
+        colonne=j
+
+        for elem in mot:
+
+            if board[i][colonne] in bonus_lettres:
+
+                if board[i][colonne] == "LT":
+                    valeurs_bonus_lettres.append(3)
+                else:
+                    valeurs_bonus_lettres.append(2)
+
+            elif board[i][colonne] in bonus_mot:
+                valeurs_bonus_lettres.append(1)
+
+                if board[i][colonne]=="MT":
+                    valeurs_bonus_mot[0]=3
+                else:
+                    valeurs_bonus_mot[1]=2
+
+            else:
+                valeurs_bonus_lettres.append(1)
+
+            colonne=colonne+1
+
+    if direction == "verticale":
+        ligne=i
+
+        for elem in mot:
+
+            if board[ligne][j] in bonus_lettres:
+
+                if board[ligne][j] == "LT":
+                    valeurs_bonus_lettres.append(3)
+                else:
+                    valeurs_bonus_lettres.append(2)
+
+            elif board[ligne][j] in bonus_mot:
+                valeurs_bonus_lettres.append(1)
+
+                if board[ligne][j]=="MT":
+                    valeurs_bonus_mot[0]=3
+                else:
+                    valeurs_bonus_mot[1]=2
+
+            else:
+                valeurs_bonus_lettres.append(1)
+
+            ligne=ligne+1
+
+    values=[valeurs_bonus_mot,valeurs_bonus_lettres]
+
+    return values   
+
 """b = board()
 init_bonus(b)
 possible = tester_placement(b,5,3,'verticale','robinet')
