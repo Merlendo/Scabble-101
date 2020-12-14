@@ -1,5 +1,6 @@
 from construction_mots import mots_jouables
 
+#Calcule la valeur du mot selon la valeur de chaque lettre
 def valeur_mot(mot,dico):
     valeur=0
     for c in mot.upper():
@@ -7,7 +8,7 @@ def valeur_mot(mot,dico):
         
     return valeur
 
-
+#Prend en parametre le retour de la fonction comtage() et attribue le bonus correspondant au placement du mot
 def valeur_mot_bonus(mot,dico,values_bonus,scrabble):
     valeur=0
     i=0
@@ -24,7 +25,7 @@ def valeur_mot_bonus(mot,dico,values_bonus,scrabble):
 
     return valeur
 
-
+#Renvoi la liste des meilleurs mots
 def meilleur_mot(liste_mots_possibles,lettres,dico):
     mots = mots_jouables(liste_mots_possibles,lettres)
     meilleurMot = mots[0]
@@ -37,3 +38,4 @@ def meilleur_mot(liste_mots_possibles,lettres,dico):
         if valeur_mot(mot,dico) == valeur_mot(meilleurMot,dico):
             meilleursMots.append(mot)
     return meilleursMots
+
