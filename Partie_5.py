@@ -1,20 +1,42 @@
+from plateau import board, init_bonus, affichageBoard
+from construction_mots import mot_jouable, generer_dico, mots_jouables
+import os
+
 vide=["x","MT","MD","LT","LD"]
 bonus_lettres=["LT","LD"]
 bonus_mot=["MT","MD"]
-def lire_coor():
 
-    i=int(input("saisir ligne debut du mot"))
-    while i<0 or i>15:
-        i=int(input("saisir ligne debut du mot"))
+def coords_check(coords):
+    temp = [c for c in coords]
+    newcoords = []
+    if (temp[0] in ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O"]) and (int(temp[1]) in [x for x in range(16) if x > 0]):
+        newcoords.append((ord(temp[0]) - ord("A"))%26+1) 
+        newcoords.append(int(temp[1]))
+        return newcoords
+    else:
+        return False
+
+def lire_coords():
+    verification = True
+    while verification:
+        os.system('cls')
+        print("Quelles coordonnées ? (ex : A5)")
+        coords = input("> ")
+        if coords_check(coords) != False:
+            coords = coords_check(coords)
+            verification = False
     
-    j=int(input("saisir colonne debut du mot"))
-    while j<0 or j>15:
-        j=int(input("saisir colonne debut du mot"))
-
-    return i,j
+    direction = ""
+    POSSIBILITE = ["horizontale","verticale"]
+    while direction.lower() not in POSSIBILITE:
+        os.system('cls')
+        print("Dans quelle direction ? (horizontale/verticale)")
+        direction = input("> ")
+        
+    return coords, direction.lower()
 
 def tester_placement(board,i,j,direction,mot):
-
+    vide=[" ","MT","MD","LT","LD"]
     drapeau = True
     lettres_necessaires = []
 
@@ -24,59 +46,68 @@ def tester_placement(board,i,j,direction,mot):
             print("mot trop long")
         else:
             for colonne in range (j,j+len(mot)):
-                if not (board[i][colonne] in vide or board[i][colonne]!=mot[colonne-j]):
+                if not (board[i][colonne] in vide or board[i][colonne] == mot[colonne-j]):
+                    '''print("board[i][colonne] != mot[colonne-j])",board[i][colonne] != mot[colonne-j])'''
                     drapeau=False
                     print("erreur",board[i][colonne])
         if drapeau:
-
-                colonne=j
-                for elem in mot :
-                    if board[i][colonne] in vide:
-                        lettres_necessaires.append(elem)
-                    colonne=colonne+1
+            colonne=j
+            for elem in mot :
+                if board[i][colonne] in vide:
+                    lettres_necessaires.append(elem.upper())
+                colonne=colonne+1
     
-    if direction=="verticale":
+
+    if direction == "verticale":
         if len(mot) > 15 - i:
             drapeau = False
             print("mot trop long")
-        else:
-            for ligne in range (i,i+len(mot)):
-                if not (board[ligne][j] in vide or board[ligne][j]!=mot[ligne-i]):
-                    drapeau=False
-                    print("erreur",board[ligne][j])
-        if drapeau:
+        else :
+            for ligne in range(i,i+len(mot)):
+                if not (board[ligne][j] in vide or board[ligne][j] == mot[ligne-i]):
+                    '''print("board: ",board[ligne][j])
+                    print("mot: ",mot[ligne-i])
+                    print("board[ligne][j] != mot[ligne-i)",board[ligne][j] != mot[ligne-i])'''
+                    drapeau = False
+                    print("erreur",board[j][ligne])
 
-                ligne=i
-                for elem in mot :
-                    if board[ligne][j] in vide:
-                        lettres_necessaires.append(elem)
-                    ligne=ligne+1
-    
+        if drapeau :  
+            ligne = i
+            for elem in mot :
+                if board[ligne][j] in vide :
+                    lettres_necessaires.append(elem.upper())
+                ligne = ligne+1
+
     return lettres_necessaires
 
 def placer_mot(board,main,mot,i,j,direction):
 
-    lettres_necessaires=tester_placement(board,i,j,direction,mot)
-    if len(lettres_necessaires)!=0:
+    lettres_necessaires = tester_placement(board,i,j,direction,mot)
 
+    if len(lettres_necessaires)!=0:
         if direction == "horizontale":
 
             colonne=j
-            for elem in mot:
+            for elem in mot.upper():
+                '''print("lettre_parcourue: ",elem)'''
                 if elem in lettres_necessaires:
-                    board[i][colonne]=elem
+                    board[i][colonne]=elem.upper()
+                    '''print("case: ",board[i][colonne])
+                    print("main: ",main)
+                    print("elem: ",elem)'''
                     main.remove(elem)
                 colonne=colonne+1
-        drapeau=True
-
+        
         if direction == "verticale":
-
-            ligne=i
-            for elem in mot:
+            ligne = i
+            for elem in mot.upper():
+                '''print("lettre_parcourue: ",elem)'''
                 if elem in lettres_necessaires:
-                    board[ligne][j]=elem
+                    board[ligne][j]=elem.upper()
+                    '''print("case: ",board[ligne][j])
+                    print("main: ",main)'''
                     main.remove(elem)
-                ligne=ligne+1
+                ligne = ligne + 1
         drapeau=True
     
     else:
@@ -84,7 +115,9 @@ def placer_mot(board,main,mot,i,j,direction):
     return drapeau
 
 def comptage(board,mot,direction,i,j):
-
+    vide=["x","MT","MD","LT","LD"]
+    bonus_lettres=["LT","LD"]
+    bonus_mot=["MT","MD"]
     valeurs_bonus_mot=[0,0]
     valeurs_bonus_lettres=[]
 
@@ -113,32 +146,31 @@ def comptage(board,mot,direction,i,j):
 
             colonne=colonne+1
 
+    if direction == "verticale":
+        ligne=i
+
+        for elem in mot:
+
+            if board[ligne][j] in bonus_lettres:
+
+                if board[ligne][j] == "LT":
+                    valeurs_bonus_lettres.append(3)
+                else:
+                    valeurs_bonus_lettres.append(2)
+
+            elif board[ligne][j] in bonus_mot:
+                valeurs_bonus_lettres.append(1)
+
+                if board[ligne][j]=="MT":
+                    valeurs_bonus_mot[0]=3
+                else:
+                    valeurs_bonus_mot[1]=2
+
+            else:
+                valeurs_bonus_lettres.append(1)
+
+            ligne=ligne+1
+
     values=[valeurs_bonus_mot,valeurs_bonus_lettres]
 
     return values   
-
-
-
-def valeur_mot(mot,dico,values_bonus):
-    valeur=0
-    i=0
-    for c in mot.upper():
-
-        valeur=valeur + dico[c]["val"]*values_bonus[1][i]
-        i=i+1
-    if values_bonus[0][0]!=0:
-        valeur=valeur*values_bonus[0][0]
-    elif values_bonus[0][1]!=0:
-        valeur=valeur*values_bonus[0][1]
-    
-    return valeur
-
-values=comptage(b,'robinet','horizontale',1,1)
-
-print(tester_placement(b,1,1,'horizontale','robinet'))
-print(placer_mot(b,["r","o","b","i","n","e","t"],'robinet',1,1,'horizontale'))
-
-affichageBoard(b)
-print()
-print("values: ",values)
-print("marquer",valeur_mot('robinet',lettres,values),"points")
