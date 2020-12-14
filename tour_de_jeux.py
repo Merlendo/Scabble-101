@@ -183,7 +183,7 @@ def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
         "--------------------------------------------------------------------------------------------------------------------------------------------------"
         ## TENTATIVE DE VALEUR
 
-        compte_bonus=comptage(board,mot,direction,coords[0],coords[1])
+        compte_bonus=comptage(board,mot,direction,coords[1]-1, coords[0]-1)
 
         placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
 
