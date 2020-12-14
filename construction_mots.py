@@ -1,3 +1,4 @@
+#Genere la liste des mots possibles au scrabble d'après le fichier dico.txt
 def generer_dico():
     f=open('dico.txt','r')
     dico_final=[]
@@ -5,6 +6,7 @@ def generer_dico():
         dico_final.append(line.rstrip())
     return dico_final
 
+#Renvoi un booléen si le mot est jouable selon la main du joueur
 def mot_jouable(mot,ll):
     lettres = list(ll)
     possible = True
@@ -18,6 +20,7 @@ def mot_jouable(mot,ll):
 
     return possible
 
+#Renvoi une liste de mots jouables selon la main du joueurs
 def mots_jouables(liste_mots,lettres):
     v=[]
     for i in liste_mots:
