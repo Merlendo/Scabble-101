@@ -3,6 +3,7 @@ from plateau import init_bonus, board
 from construction_mots import generer_dico
 from tour_de_jeux import initialisation, tour_joueur
 import os
+import shelve
 
 def affichage():
     os.system('cls')
@@ -37,6 +38,25 @@ def menu():
         init_bonus(b)
         sac = ['R','O','B','I','N','E','T']
         tour_joueur(b, joueurs[ordre]["main"], sac, joueurs, ordre, liste_mots, True)
+    
+    if action == '2':
+        print("Entrer le nom de votre sauvegarde :")
+        nom = input("> ")
 
+        #(board, main, sac, joueurs, ordre, liste_mots, premiertour
+        sauvegarde = shelve.open("SAVE/"+nom+'/'+nom)
+        b = sauvegarde['plateau'] 
+        sac = sauvegarde['sac'] 
+        joueurs = sauvegarde['joueurdic'] 
+        ordre = sauvegarde['ordre'] 
+        premiertour = sauvegarde['premiertour']
+        sauvegarde.close()
+
+        liste_mots = generer_dico()
+        tour_joueur(b, joueurs[ordre]["main"], sac, joueurs, ordre, liste_mots, premiertour)
+
+    if action == '3':
+        os.system('cls')
+        exit()
 
 menu()
