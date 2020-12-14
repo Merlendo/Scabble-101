@@ -4,7 +4,6 @@ def generer_dico():
     for line in f:
         dico_final.append(line.rstrip())
     return dico_final
-#print(generer_dico())
 
 def mot_jouable(mot,ll):
     lettres = list(ll)
