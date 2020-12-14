@@ -1,9 +1,11 @@
 from pioche import piocher, init_dico, init_pioche, echanger, completer_main
 from plateau import affichageBoard, init_bonus, board
-from placement import lire_coords, tester_placement, placer_mot, coords_check
+from placement import lire_coords, tester_placement, placer_mot, coords_check, comptage
 from construction_mots import mot_jouable, generer_dico, mots_jouables
+from valeur import valeur_mot_bonus, valeur_mot
 import os
 import time
+import shelve
 
 def clear_screen():
     os.system('cls')
@@ -19,49 +21,26 @@ def initialisation(sac):
         clear_screen()
     return setup
 
-def fin_partie(sac, joueurs):
+def fin_partie(sac, joueurs,board,ordre):
     if len(sac) == 0:
+        affichage_ecran(board,joueurs,ordre,sac)
         print("La partie est fini")
+        biggest = [joueurs[1]['nom'], joueurs[1]['score']]
         for i in range(len(joueurs)):
             print(joueurs[i]["nom"], ':',joueurs[i]["score"])
-        print("Le gagnant est ...")
-        #menu()
+            if joueurs[i]["score"] > biggest[1]:
+                biggest.insert(0, joueurs[i]['nom'])
+                biggest.pop(1)
+                biggest.insert(1, joueurs[i]['score'])
+                biggest.pop(2)
+        print("Le gagnant est ...",biggest[0],"avec",biggest[1], "points")
 
-def comptage(board,mot,direction,i,j):
-    vide=["x","MT","MD","LT","LD"]
-    bonus_lettres=["LT","LD"]
-    bonus_mot=["MT","MD"]
-    valeurs_bonus_mot=[0,0]
-    valeurs_bonus_lettres=[]
 
-    if direction == "horizontale":
-        colonne=j
-
-        for elem in mot:
-
-            if board[i][colonne] in bonus_lettres:
-
-                if board[i][colonne] == "LT":
-                    valeurs_bonus_lettres.append(3)
-                else:
-                    valeurs_bonus_lettres.append(2)
-
-            elif board[i][colonne] in bonus_mot:
-                valeurs_bonus_lettres.append(1)
-
-                if board[i][colonne]=="MT":
-                    valeurs_bonus_mot[0]=3
-                else:
-                    valeurs_bonus_mot[1]=2
-
-            else:
-                valeurs_bonus_lettres.append(1)
-
-            colonne=colonne+1
-
-    values=[valeurs_bonus_mot,valeurs_bonus_lettres]
-
-    return values   
+        time.sleep(10)#menu()
+        print("Appuyer sur Entrer pour quitter")
+        input()
+        clear_screen()
+        exit()
 
 
 def prochain_tour(board, ordre, joueurs, sac, liste_mots, premiertour):
@@ -71,33 +50,30 @@ def prochain_tour(board, ordre, joueurs, sac, liste_mots, premiertour):
 def affichage_ecran(board,joueurs,ordre,sac):
     clear_screen()
     affichageBoard(board)
+    print("LEGENDE : * : MOT TRIPLE | ^ : MOT DOUBLE | - : LETTRES TRIPLE | + : LETTRES DOUBLE")
     print("NOM DU JOUEUR :", joueurs[ordre]["nom"])
     #print(["A","Z","E","V","C","?","U"])
 
     for i in range(len(joueurs)):
-        print(joueurs[i]['nom'],joueurs[i]['score'], end='')
+        print(joueurs[i]['nom'] + ":",str(joueurs[i]['score']) + " | ", end='', sep=" ")
     print()
     print(joueurs[ordre]["main"])
     print("TAILLE SAC :", len(sac))
 
 def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
-    fin_partie(sac, joueurs)
-    #AFFICHAGE DU PLATEAU / ESTHETIQUE / MISE EN PLACE
+    fin_partie(sac, joueurs,board,ordre)
+    
+    #AFFICHAGE DU PLATEAU 
     affichage_ecran(board,joueurs,ordre,sac)
-    #AFFICHER LA TAILLE DU SAC EN PERMANENCE
-    #-------------------------------------------------------#
 
     #ACTION DU TOURS
     action = 0
-    POSSIBILITE = ["1", "2", "3"]
+    POSSIBILITE = ["1", "2", "3","4"]
     while action not in POSSIBILITE:
         affichage_ecran(board,joueurs,ordre,sac)
-        print("1 - PASSER | 2 - ECHANGER | 3 - PLACER")
+        print("1 - PASSER | 2 - ECHANGER | 3 - PLACER | 4 - SAUVEGARDER")
         action = input("> ")
         
-
-    
-
 
     #PASSE LE TOUR - OK
     if action == "1":
@@ -160,7 +136,7 @@ def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
             if coords_check(coords.upper()) != False:
         
                 coords = coords_check(coords.upper())
-                if not premiertour or ((coords[0] == 8 and coords[1] + len(mot) >= 8) or (coords[1] == 8 and coords[1] + len(mot) >= 8)):
+                if not premiertour or ((coords[0] == 8 and coords[1]-1 + len(mot) >= 8) or (coords[1] == 8 and coords[0]-1 + len(mot) >= 8)):
                     verification = False
                     
         
@@ -180,35 +156,41 @@ def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
         
         #print(comptage(board,mot,direction,coords[0]-1,coords[1]-1))
         #time.sleep(4)
-        "--------------------------------------------------------------------------------------------------------------------------------------------------"
+       
+       
+        #----------------------------------------------------------------------------------------------------------------
         ## TENTATIVE DE VALEUR
-
-        compte_bonus=comptage(board,mot,direction,coords[1]-1, coords[0]-1)
-
-        placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
-
-        #REMETTRE LE NOMBRE DE PIECES POSER DANS LA MAIN DU JOUEURS ET INCREMENTER LE SCORE
-        scrabble=completer_main(main,sac)
-        joueurs[ordre]["score"]=joueurs[ordre]["score"]+valeur_mot_bonus(mot,init_dico(),compte_bonus,scrabble)
-        "--------------------------------------------------------------------------------------------------------------------------------------------------"
+        lettres = init_dico()
+        print("VALEUR MOT : ",valeur_mot(mot,lettres))
+        time.sleep(5)
+        lettres_necessaires=tester_placement(board,coords[1]-1,coords[0]-1,direction,mot)
+        if len(lettres_necessaires)!=0:
+            compte_bonus=comptage(board,mot,direction,coords[1]-1, coords[0]-1)
+            placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower(),lettres_necessaires)
+            scrabble=completer_main(main,sac)
+            joueurs[ordre]["score"]=joueurs[ordre]["score"]+valeur_mot_bonus(mot,lettres,compte_bonus,scrabble)
         
-        ##placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
+        #----------------------------------------------------------------------------------------------------------------
+        
+        #placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
 
         #REMETTRE LE NOMBRE DE PIECES POSER DANS LA MAIN DU JOUEURS
-        ##completer_main(main,sac)
+        #completer_main(main,sac)
     
     
         prochain_tour(board, ordre, joueurs, sac,liste_mots, False)
 
-"""#VARIABLES TEMPORAIRES DE TEST    
-lettres = init_dico()
-sac = init_pioche(lettres)
-board = board()
-liste_mots = generer_dico()
-#----------------------------------
-clear_screen()
-joueurs = initialisation(sac)
-ordre = 0
-init_bonus(board)
-#sac = ['R','O','B','I','N','E','T']
-tour_joueur(board, joueurs[ordre]["main"], sac, joueurs, ordre, premiertour=False)"""
+    elif action == '4':
+        affichage_ecran(board,joueurs,ordre,sac)
+        print("Entrer le nom de votre sauvegarde :")
+        nom = input("> ")
+        #(board, main, sac, joueurs, ordre, liste_mots, premiertour
+        os.mkdir("SAVE/"+nom)
+        sauvegarde = shelve.open("SAVE/"+nom+'/'+nom)
+        sauvegarde['plateau'] = board
+        sauvegarde['sac'] = sac
+        sauvegarde['joueurdic'] = joueurs
+        sauvegarde['ordre'] = ordre
+        sauvegarde['premiertour'] = premiertour
+        sauvegarde.close()
+        exit()
