@@ -1,5 +1,6 @@
 import random
 
+#Petit script qui ma servi à simplifié la création du dictionnaire (inutile au programme, mais peut-être utile si on veux modifié l'occurence ou la valeur des lettre ? Selon la langue par exemple)
 def init_dico_manuel():
     lettres = dict()
     i = ord("A")
@@ -16,7 +17,7 @@ def init_dico_manuel():
         print("deuxieme dic : ",lettres[lettre])
     return lettres
 
-
+#Dictionnaire d'occurence et de valeurs des lettres
 def init_dico():
     lettres = {'A': {'occ': 9, 'val': 1},
                'B': {'occ': 2, 'val': 3}, 
@@ -48,6 +49,7 @@ def init_dico():
 
     return lettres
 
+#Créer la pioche/sac
 def init_pioche(dico):
     pioche = []
     for lettre in dico :
@@ -56,6 +58,7 @@ def init_pioche(dico):
         #pioche = [lettre for x in range(dico[lettre]["occ"])] VOIR COMPREHENSION PYTHON
     return pioche
 
+#Permet de piocher un nombre de pièce dans le sac
 def piocher(x, sac):
     jetons_piocher = []
     for i in range(x):
@@ -64,6 +67,7 @@ def piocher(x, sac):
         sac.pop(r)
     return jetons_piocher
 
+#Complete la main du joueur
 def completer_main(main,sac):
     scrabble=False
     jeton_a_piocher = 7-len(main)
@@ -74,17 +78,15 @@ def completer_main(main,sac):
 
     else:
         main.extend(piocher(jeton_a_piocher,sac))
-
+    
+    #Renvoi True si le joueur a fait un SCRABBLE et est traité dans valeur_mot_bonus()
     if jeton_a_piocher==7:
         scrabble=True
         
     return scrabble
-        
+
+#Echange une liste de jeton entre le sac et la main du joueur, on enlève les jetons sélectionner de la main du joueur dans tour_de_jeu
 def echanger(jetons, main, sac):
-    
     listeJeton = piocher(len(jetons),sac)
     main.extend(listeJeton)
-
     sac.extend(jetons)
-
-  
