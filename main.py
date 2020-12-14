@@ -36,7 +36,6 @@ def menu():
         joueurs = initialisation(sac)
         ordre = 0
         init_bonus(b)
-        sac = ['R','O','B','I','N','E','T']
         tour_joueur(b, joueurs[ordre]["main"], sac, joueurs, ordre, liste_mots, True)
     
     if action == '2':
