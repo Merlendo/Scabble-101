@@ -180,11 +180,22 @@ def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
         
         #print(comptage(board,mot,direction,coords[0]-1,coords[1]-1))
         #time.sleep(4)
+        "--------------------------------------------------------------------------------------------------------------------------------------------------"
+        ## TENTATIVE DE VALEUR
+
+        compte_bonus=comptage(board,mot,direction,coords[0],coords[1])
 
         placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
 
+        #REMETTRE LE NOMBRE DE PIECES POSER DANS LA MAIN DU JOUEURS ET INCREMENTER LE SCORE
+        scrabble=completer_main(main,sac)
+        joueurs[ordre]["score"]=joueurs[ordre]["score"]+valeur_mot_bonus(mot,init_dico(),compte_bonus,scrabble)
+        "--------------------------------------------------------------------------------------------------------------------------------------------------"
+        
+        ##placer_mot(board, main, mot.upper(), coords[1]-1, coords[0]-1, direction.lower())
+
         #REMETTRE LE NOMBRE DE PIECES POSER DANS LA MAIN DU JOUEURS
-        completer_main(main,sac)
+        ##completer_main(main,sac)
     
     
         prochain_tour(board, ordre, joueurs, sac,liste_mots, False)
