@@ -2,7 +2,7 @@ from pioche import piocher, init_dico, init_pioche, echanger, completer_main
 from plateau import affichageBoard, init_bonus, board
 from placement import lire_coords, tester_placement, placer_mot, coords_check, comptage
 from construction_mots import mot_jouable, generer_dico, mots_jouables
-from valeur import valeur_mot_bonus, valeur_mot
+from valeurs import valeur_mot_bonus, valeur_mot
 import os
 import time
 import shelve
