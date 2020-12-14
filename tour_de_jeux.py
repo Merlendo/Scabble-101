@@ -6,7 +6,6 @@ from valeur import valeur_mot_bonus, valeur_mot, meilleur_mot
 import os
 import time
 import shelve
-import random
 
 def clear_screen():
     os.system('cls')
@@ -129,12 +128,10 @@ def tour_joueur(board, main, sac, joueurs, ordre, liste_mots, premiertour):
 
             #petit code pour appeler à l'aide pendant le choix du mot
             if mot == '!help':
-                r = random.randint(0,len(motsJouable)-1)
-                print(motsJouable[r:(r+5)%len(motsJouable)])
+                print(motsJouable[:5])
                 time.sleep(4)
             elif mot == '!superhelp':
-
-                if motsJouable > 0:
+                if len(motsJouable) > 0:
                     print(meilleur_mot(motsJouable,main,init_dico()))
                 else:
                     print("Aucun mot jouable")
