@@ -64,29 +64,27 @@ def piocher(x, sac):
         sac.pop(r)
     return jetons_piocher
 
-
 def completer_main(main,sac):
-    jeton_a_piocher = 7-len(main)
     scrabble=False
+    jeton_a_piocher = 7-len(main)
+
+
     if len(sac) <= jeton_a_piocher:
         main.extend(piocher(len(sac),sac))
+
     else:
         main.extend(piocher(jeton_a_piocher,sac))
-    
+
     if jeton_a_piocher==7:
         scrabble=True
+        
     return scrabble
         
 def echanger(jetons, main, sac):
-  return None
     
-'''
-dico = init_dico()
-p = init_pioche(dico)
-print(p)
-##pioche = ['A']
-main = ["I","J"]
-print(main)
-completer_main(main,p)
-##print(pioche)
-print(main)'''
+    listeJeton = piocher(len(jetons),sac)
+    main.extend(listeJeton)
+
+    sac.extend(jetons)
+
+  
